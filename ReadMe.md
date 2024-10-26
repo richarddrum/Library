@@ -48,7 +48,7 @@ Download and install the necessary technology: .NET 8, Node Package Manager, SQL
    ```bash
    git clone https://github.com/richarddrum/Library.git
 2. Ensure SQL Server is running on port 1433 on your machine
-    - Set the connection string password in ./appsettings.json
+    - Set the connection string in ./appsettings.json appropriately 
 3. Build and start the API - should run locally on port 5237
    ```bash
    dotnet build
