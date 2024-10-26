@@ -51,6 +51,7 @@ Download and install the necessary technology: .NET 8, Node Package Manager, SQL
     - Set the connection string in ./appsettings.json appropriately 
 3. Build and start the API - should run locally on port 5237
    ```bash
+   cd Library
    dotnet build
    dotnet run
 4. Install the necessary dependencies
