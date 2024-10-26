@@ -4,3 +4,4 @@ library-frontend/node_modules/*
 package-lock.json
 library-frontend/package-lock.json
 library-frontend/build/*
+bin/*
