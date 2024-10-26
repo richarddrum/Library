@@ -4411,11 +4411,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/richarddrum/TroyWebTechnicalAssessment/Git/Library/Library.csproj",
+      "projectUniqueName": "/Users/richarddrum/TroyWebTechnicalAssessment/Library/Library.csproj",
       "projectName": "Library",
-      "projectPath": "/Users/richarddrum/TroyWebTechnicalAssessment/Git/Library/Library.csproj",
+      "projectPath": "/Users/richarddrum/TroyWebTechnicalAssessment/Library/Library.csproj",
       "packagesPath": "/Users/richarddrum/.nuget/packages/",
-      "outputPath": "/Users/richarddrum/TroyWebTechnicalAssessment/Git/Library/obj/",
+      "outputPath": "/Users/richarddrum/TroyWebTechnicalAssessment/Library/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/richarddrum/.nuget/NuGet/NuGet.Config"

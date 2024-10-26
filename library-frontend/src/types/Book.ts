@@ -1,3 +1,5 @@
+import { Review } from "./Review";
+
 export interface Book {
     id: number;
     title: string;
@@ -12,4 +14,6 @@ export interface Book {
     isAvailable: boolean;    // Availability status
     checkedOutDate?: Date;   // Optional field for checkout date
     returnDate?: Date;       // Optional field for return date
+    averageRating?: number;
+    customerReviews?: Review[]; 
 }

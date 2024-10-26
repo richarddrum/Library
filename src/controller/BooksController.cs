@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BookStoreAPI.Data;
-using BookStoreAPI.Models; // Assuming you have a Models namespace for your entities
-using System.Linq;
+using BookStoreAPI.Models; 
+using BookStoreAPI.Models.DTOs;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -67,10 +67,13 @@ public class BooksController : ControllerBase
                 .Take(10) // Limit to 10 featured books
                 .Select(b => new
                 {
+                    b.Id,
                     b.Title,
                     b.Author,
                     b.Description,
                     b.CoverImage,
+                    b.IsAvailable,
+                    b.Category,
                     AverageRating = b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0
                 })
                 .ToList();
@@ -92,7 +95,6 @@ public class BooksController : ControllerBase
         }
     }
 
-    // iii. View Book Details
     [HttpGet("{id}")]
     public IActionResult GetBookDetails(int id)
     {
@@ -108,6 +110,9 @@ public class BooksController : ControllerBase
                 b.Category,
                 b.ISBN,
                 b.PageCount,
+                b.IsAvailable,
+                b.CheckedOutDate,
+                b.ReturnDate,
                 Reviews = b.Reviews.Select(r => new {
                     r.Message,
                     r.Rating
@@ -121,7 +126,6 @@ public class BooksController : ControllerBase
         return Ok(book);
     }
 
-    // iv. Search For Books
     [HttpGet("search")]
     public IActionResult SearchBooks([FromQuery] string query)
     {
@@ -132,7 +136,6 @@ public class BooksController : ControllerBase
         return Ok(books);
     }
 
-    // v. Manage Books
     [HttpPost]
     [Authorize(Roles = "Librarian")] // Only allow librarians to add books
     public IActionResult CreateBook([FromBody] Book book)
@@ -188,7 +191,6 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    // vi. Book Checkout
     [HttpPost("{id}/checkout")]
     [Authorize(Roles = "Customer")] // Only allow customers to check out books
     public IActionResult CheckoutBook(int id)
@@ -221,17 +223,20 @@ public class BooksController : ControllerBase
         return Ok("Book returned successfully.");
     }
 
-    // vii. Customer Reviews
     [HttpPost("{id}/reviews")]
     [Authorize(Roles = "Customer")] // Only allow customers to leave reviews
-    public IActionResult LeaveReview(int id, [FromBody] Review review)
+    public IActionResult LeaveReview(int id, [FromBody] ReviewDto reviewDto)
     {
-        var book = _context.Books.Find(id);
-        if (book == null)
-            return NotFound();
+        Console.WriteLine("we here");
 
+        Review review = new Review
+        {
+            Message = reviewDto.Review,
+            Rating = reviewDto.Rating,
+            BookId = id 
+        };
         // Add the review to the book
-        review.BookId = id; // Assuming you have a BookId property in the Review model
+        review.BookId = id; 
         _context.Reviews.Add(review);
         _context.SaveChanges();
 

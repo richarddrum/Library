@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddBook: React.FC = () => {
     const [book, setBook] = useState<Book>({
-        id: 0, // You can set this to 0 since it's not needed for a new book
+        id: 0, // Set this to 0 since it's not needed for a new book
         title: '',
         author: '',
         coverImage: '',
@@ -70,7 +70,9 @@ const AddBook: React.FC = () => {
 
             const bookToSend = {
                 ...book,
-                publicationDate: book.publicationDate.toISOString()
+                publicationDate: book.publicationDate.toISOString(),
+                checkedOutDate: book.checkedOutDate?.toISOString(), //TODO: these are not being set?
+                returnDate: book.returnDate?.toISOString() 
             };
 
             console.log(bookToSend);

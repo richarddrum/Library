@@ -22,7 +22,7 @@ namespace BookStoreAPI.Data
             base.OnModelCreating(modelBuilder);
             // Configure relationships if needed
             modelBuilder.Entity<Review>()
-                .HasOne(r => r.Book)
+                .HasOne<Book>()
                 .WithMany(b => b.Reviews)
                 .HasForeignKey(r => r.BookId);
         }

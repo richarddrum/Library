@@ -8,6 +8,8 @@ import ManageBooks from './ManageBooks';
 import AddBook from './AddBook';
 import EditBook from './EditBook';
 import Layout from './Layout';
+import FeaturedBooks from './FeaturedBooks';
+import BookDetails from './BookDetails';
 
 const App: React.FC = () => {
     return (
@@ -20,6 +22,8 @@ const App: React.FC = () => {
                     <Route path="/manage-books" element={<ManageBooks />} />
                     <Route path="/add-book" element={<AddBook />} />
                     <Route path="/edit-book/:id" element={<EditBook />} />
+                    <Route path="/featured-books" element={<FeaturedBooks />} />
+                    <Route path="/book-details/:id" element={<BookDetails />} />
                 </Routes>
             </Layout>
         </Router>

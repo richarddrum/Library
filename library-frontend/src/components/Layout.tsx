@@ -1,12 +1,15 @@
 // src/Layout.tsx
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { isTokenValid } from '../utilities/AuthenticationUtils';
 import { jwtDecode } from 'jwt-decode';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
 
+    const handleHome = () => {
+        navigate('/'); 
+    };
     const handleLogout = () => {
         localStorage.removeItem('token'); 
         navigate('/login'); 
@@ -21,7 +24,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         navigate('/login'); 
     };
     const handleRegister = () => {
-        navigate('/register'); 
+        navigate('/signup'); 
+    };
+    const handleFeatured = () => {
+        navigate('/featured-books'); 
     };
     const token = localStorage.getItem('token');
     const [userType, setUserType] = useState<string | null>(null);
@@ -40,13 +46,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <nav>
                 <ul>
                     <li>
-                        <Link to="/">Home</Link>
+                        <button onClick={handleHome}>Home</button>
                     </li>
                     <li>
                         {!tokenIsValid && (<button onClick={handleRegister}>Register</button>)}
                     </li>
                     <li>
                         {!tokenIsValid && (<button onClick={handleLogin}>Login</button>)}
+                    </li>
+                    <li>
+                        {tokenIsValid && (<button onClick={handleFeatured}>Featured Books</button>)}
                     </li>
                     <li>
                         {tokenIsValid && userType === 'Librarian' && (<button onClick={handleManageBooks}> Manage Books</button>)}

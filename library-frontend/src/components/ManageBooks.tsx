@@ -1,4 +1,3 @@
-// src/ManageBooks.tsx
 import React, { useEffect, useState } from 'react';
 import axiosConfig from '../utilities/axiosConfig';
 import BookList from './BookList';
@@ -17,11 +16,11 @@ const ManageBooks: React.FC = () => {
     const fetchBooks = async () => {
         try {
             const config = getAuthHeader(); 
-            const response = await axiosConfig.get('/api/books', config); // Fetch books from your API
+            const response = await axiosConfig.get('/api/books', config);
             setBooks(response.data);
         } catch (error) {
             console.error('Error fetching books:', error);
-            // Optionally set an error state here if needed
+            // set an error state here if needed?
         }
     };
 

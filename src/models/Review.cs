@@ -19,8 +19,5 @@ namespace BookStoreAPI.Models
         public int Rating { get; set; } // Rating from 1 to 5 stars
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Timestamp for when the review was created
-
-        // Navigation property to the associated book
-        public virtual Book Book { get; set; }
     }
 }

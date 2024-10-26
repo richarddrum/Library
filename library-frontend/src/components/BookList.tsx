@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Book } from '../types/Book';
+import { useNavigate } from 'react-router-dom';
 
 // Define the props for the BookList component
 interface BookListProps {
     books: Book[];
-    handleEdit: (book: Book) => void;
-    handleDelete: (id: number) => void;
+    handleEdit?: (book: Book) => void; // Made optional
+    handleDelete?: (id: number) => void; // Made optional
 }
 
 const BookList: React.FC<BookListProps> = ({ books, handleEdit, handleDelete }) => {
     const [sortField, setSortField] = useState<keyof Book>('title'); // Default sort field
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc'); // Default sort order
+    const navigate = useNavigate();
 
      // Function to handle sorting
     const sortedBooks = [...books].sort((a, b) => {
@@ -57,22 +59,31 @@ const BookList: React.FC<BookListProps> = ({ books, handleEdit, handleDelete }) 
                         <th onClick={() => toggleSort('isAvailable')} style={{ cursor: 'pointer' }}>
                             Is Available {sortField === 'isAvailable' ? (sortOrder === 'asc' ? '🔼' : '🔽') : ''}
                         </th>
-                        <th>Actions</th>
+                        {(!handleEdit && !handleDelete) && <th>Average Rating</th>}{/* TODO: This is a bad way of finding out to display */}
+                        {(handleEdit || handleDelete) && <th>Actions</th>}
                     </tr>
                 </thead>
                 <tbody>
                     {sortedBooks.map((b) => (
                         <tr key={b.id}>
                             <td>
-                                <img src={b.coverImage} alt='' style={{ width: '100px' }} />
+                                <img src={b.coverImage} alt='' style={{ width: '100px' }} /> {/*TODO: FALLBACK IMAGE? img src=b.coverImage || 'fallback-image-url.jpg'*/}
                             </td>
-                            <td>{b.title}</td>
+                            <td>
+                                <span 
+                                    onClick={() => navigate(`/book-details/${b.id}`)} // Navigate on title click
+                                    style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }} // Styling for a clickable look
+                                >
+                                    {b.title}
+                                </span>
+                            </td>
                             <td>{b.author}</td>
                             <td>{b.category}</td>
                             <td>{b.isAvailable ? 'Yes' : 'No'}</td>
+                            {(!handleEdit && !handleDelete) && <td>{b.averageRating !== undefined ? b.averageRating.toFixed(1) : 'N/A'}</td>}
                             <td>
-                                <button onClick={() => handleEdit(b)}>Edit</button>
-                                <button onClick={() => handleDelete(b.id)}>Delete</button>
+                                {handleEdit && <button onClick={() => handleEdit(b)}>Edit</button>}
+                                {handleDelete && <button onClick={() => handleDelete(b.id)}>Delete</button>}
                             </td>
                         </tr>
                     ))}
