@@ -15,12 +15,12 @@ This Library Management System is a web application designed to manage book regi
 
 - **Customers**: 
   - Can browse books on the registry
-  - Make reviews on books that include a star rating, and review message
-  - Check out books.
+  - Make reviews on books that include a star rating, and review message through the book detail page.
+  - Check out books through the book detail page.
 - **Librarians**: 
   - Can view all checked-out books and their due dates.
   - Manage book information and availability.
-  - Add, edit and delete books on the registry
+  - Add, edit and delete books on the registry through the book detail page.
   - Return books
   
 ### JWT Authentication
