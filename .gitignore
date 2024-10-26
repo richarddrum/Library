@@ -5,3 +5,4 @@ package-lock.json
 library-frontend/package-lock.json
 library-frontend/build/*
 bin/*
+.DS_Store
