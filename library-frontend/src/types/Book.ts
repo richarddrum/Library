@@ -15,5 +15,5 @@ export interface Book {
     checkedOutDate?: Date;   // Optional field for checkout date
     returnDate?: Date;       // Optional field for return date
     averageRating?: number;
-    customerReviews?: Review[]; 
+    reviews: Review[]; 
 }

@@ -113,9 +113,7 @@ namespace BookStoreAPI.Controllers
 
         private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
-            Console.WriteLine("making token");
-            var roles = await _userManager.GetRolesAsync(user); // Fetch roles from UserManager
-            Console.WriteLine($"User roles: {string.Join(", ", roles)}");
+            var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {

@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 import axiosConfig from '../utilities/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import '../styles/styles.css'; // Import your centralized CSS
-import { login } from './authService';
+import { login } from '../utilities/authService';
+import { useUserContext } from './UserContext';
 
 const SignUp: React.FC = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userType, setUserType] = useState('Customer'); // Default to Customer
+    const [userType, setUserTypeForPage] = useState<'Customer' | 'Librarian' >('Customer'); 
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const [success, setSuccess] = useState('');
+    const { setUserType, setTokenIsValid } = useUserContext();
     const navigate = useNavigate();
 
     const handleSignUp = async (e: React.FormEvent) => {
@@ -28,7 +30,7 @@ const SignUp: React.FC = () => {
             });
             setSuccess('User registered successfully!');
             // Automatically log in the user after registration
-            await login(username, password, navigate);
+            await login(username, password, navigate, setUserType, setTokenIsValid);
         } catch (error: any) {
             // Check if the response contains error messages
             if (error.response && error.response.data.errors) {
@@ -79,7 +81,7 @@ const SignUp: React.FC = () => {
                             name="userType"
                             value="Customer"
                             checked={userType === 'Customer'}
-                            onChange={(e) => setUserType(e.target.value)}
+                            onChange={(e) => setUserTypeForPage(e.target.value as 'Customer' | 'Librarian')} 
                         />
                         <label htmlFor="customer">Customer</label>
                     </div>
@@ -90,7 +92,7 @@ const SignUp: React.FC = () => {
                             name="userType"
                             value="Librarian"
                             checked={userType === 'Librarian'}
-                            onChange={(e) => setUserType(e.target.value)}
+                            onChange={(e) => setUserTypeForPage(e.target.value as 'Customer' | 'Librarian')}
                         />
                         <label htmlFor="librarian">Librarian</label>
                     </div>

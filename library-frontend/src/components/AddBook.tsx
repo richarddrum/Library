@@ -19,6 +19,7 @@ const AddBook: React.FC = () => {
         isAvailable: true,
         checkedOutDate: undefined,
         returnDate: undefined,
+        reviews: []
     });
 
     const [error, setError] = useState<string | null>(null);
@@ -30,30 +31,6 @@ const AddBook: React.FC = () => {
         // Handle the date input separately
         if (name === 'publicationDate') {
             setBook({ ...book, publicationDate: new Date(value) });
-        } else if (name === 'isAvailable') {
-            // If isAvailable is being changed
-            const checked = (e.target as HTMLInputElement).checked;
-            if (checked) {
-                // If set to true, set both dates to null
-                setBook({ 
-                    ...book, 
-                    isAvailable: checked, 
-                    checkedOutDate: undefined, 
-                    returnDate: undefined 
-                });
-            } else {
-                // If set to false, set checkedOutDate to today and returnDate to 5 days from now
-                const today = new Date();
-                const returnDate = new Date();
-                returnDate.setDate(today.getDate() + 5); // Set return date to 5 days from today
-    
-                setBook({ 
-                    ...book, 
-                    isAvailable: checked, 
-                    checkedOutDate: today, 
-                    returnDate: returnDate 
-                });
-            }
         } else {
             // For all other fields
             setBook({ ...book, [name]: value });
@@ -70,9 +47,7 @@ const AddBook: React.FC = () => {
 
             const bookToSend = {
                 ...book,
-                publicationDate: book.publicationDate.toISOString(),
-                checkedOutDate: book.checkedOutDate?.toISOString(), //TODO: these are not being set?
-                returnDate: book.returnDate?.toISOString() 
+                publicationDate: book.publicationDate.toISOString()
             };
 
             console.log(bookToSend);
@@ -94,6 +69,7 @@ const AddBook: React.FC = () => {
                 isAvailable: true,
                 checkedOutDate: undefined,
                 returnDate: undefined,
+                reviews: []
             });
         } catch (error) {
             setError('Failed to add book. Please try again.');
@@ -149,10 +125,6 @@ const AddBook: React.FC = () => {
                 <div>
                     <label>Page Count:</label>
                     <input type="number" name="pageCount" value={book.pageCount} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Is Available:</label>
-                    <input type="checkbox" name="isAvailable" checked={book.isAvailable} onChange={(e) => setBook({ ...book, isAvailable: e.target.checked })} />
                 </div>
                 <button type="submit">Add Book</button>
             </form>

@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosConfig from '../utilities/axiosConfig';
 import { Book } from '../types/Book';
 import { getAuthHeader } from '../utilities/ApiUtils';
+import { useUserContext } from './UserContext';
 
 const BookDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [book, setBook] = useState<Book | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [reviewText, setReviewText] = useState<string>('');
-    const [rating, setRating] = useState<number | null>(null); 
+    const [rating, setRating] = useState<number | null>(null);
+    const [validationMessage, setValidationMessage] = useState<string | null>(null);
+    const { userType } = useUserContext();
     const navigate = useNavigate();
 
     const StarRating: React.FC<{ rating: number | null; setRating: (rating: number) => void; }> = ({ rating, setRating }) => {
@@ -32,45 +35,87 @@ const BookDetails: React.FC = () => {
         );
     };
 
-    useEffect(() => {
-        const fetchBook = async () => {
-            try {
-                const config = getAuthHeader();
-                const response = await axiosConfig.get(`/api/books/${id}`, config);
-                const fetchedBook = response.data;
+    // use callback to avoid rerenders (?)
+    const fetchBook = useCallback(async () => {
+        try {
+            const config = getAuthHeader();
+            const response = await axiosConfig.get(`/api/books/${id}`, config);
+            const fetchedBook = response.data;
 
-                // Convert publicationDate to Date if it's a string
-                if (typeof fetchedBook.publicationDate === 'string') {
-                    fetchedBook.publicationDate = new Date(fetchedBook.publicationDate);
-                }
-                setBook(fetchedBook);
-            } catch (error) {
-                console.error('Error fetching book:', error);
-                setError('Failed to fetch book details.');
+            // Convert publicationDate to Date if it's a string
+            if (typeof fetchedBook.publicationDate === 'string') {
+                fetchedBook.publicationDate = new Date(fetchedBook.publicationDate);
             }
-        };
 
-        fetchBook();
-    }, [id]);
+            // Map reviews to correct structure if needed
+            fetchedBook.reviews = fetchedBook.reviews?.map((review: any) => ({
+                message: review.message, // Ensure the casing matches the API response
+                rating: review.rating,
+            })) || [];
+
+            setBook(fetchedBook);
+        } catch (error) {
+            console.error('Error fetching book:', error);
+            setError('Failed to fetch book details.');
+        }
+    }, [id]); // Add 'id' as dependency
+
+    useEffect(() => {
+        fetchBook(); // Call fetchBook on component mount
+    }, [fetchBook]);
 
     const handleReviewSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        // Check if the rating is selected
+        if (rating === null) {
+            setValidationMessage('Please select a rating before submitting your review.'); // Set validation message
+            return; // Exit the function if no rating is selected
+        }
         if (book) {
             try {
                 const config = getAuthHeader();
                 await axiosConfig.post(`/api/books/${id}/reviews`, { review: reviewText, rating }, config);
-                
-                // Optionally, update the local state with the new review
-                setBook(prevBook => ({
-                    ...prevBook!,
-                    customerReviews: [...(prevBook?.customerReviews || []), { review: reviewText, rating }] // Add the new review with rating
-                }));
+
+                // After submitting the review, refetch the book
+                await fetchBook(); // Refetch the book to include the new review
 
                 setReviewText(''); // Clear the input field
                 setRating(null); // Reset the rating
+                setValidationMessage(null); // Clear validation message after successful submission
             } catch (error) {
                 console.error('Error submitting review:', error);
-                setError('Failed to submit your review.');
+                setError('Failed to submit your review.'); // Generic error message for other issues
+            }
+        }
+    };
+
+    const handleCheckout = async () => {
+        if (book && book.isAvailable) {
+            try {
+                const config = getAuthHeader();
+                await axiosConfig.post(`/api/books/${id}/checkout`, {}, config); 
+
+                // Optionally refetch the book to update its status
+                await fetchBook();
+                alert('Book checked out successfully!');
+            } catch (error) {
+                console.error('Error attempting checkout: ', error);
+                setError('Failed to checkout book.'); // Generic error message for other issues
+            }
+        }
+    };
+
+    const handleReturn = async () => {
+        if (book && !book.isAvailable) {
+            try {
+                const config = getAuthHeader();
+                await axiosConfig.post(`/api/books/${id}/return`, {}, config);
+                // Optionally refetch the book to update its status
+                await fetchBook();
+                alert('Book returned successfully!');
+            } catch (error) {
+                console.error('Error attempting return: ', error);
+                setError('Failed to return book.'); // Generic error message for other issues
             }
         }
     };
@@ -101,19 +146,19 @@ const BookDetails: React.FC = () => {
             <p><strong>Return Date:</strong> {book.returnDate ? new Date(book.returnDate).toLocaleDateString() : 'N/A'}</p>
             <h3>Customer Reviews</h3>
             <ul>
-                {book.customerReviews && book.customerReviews.length > 0 ? (
-                    book.customerReviews.map((review, index) => (
+                {book.reviews && book.reviews.length > 0 ? (
+                    book.reviews.map((review, index) => (
                         <li key={index}>
                             <strong>{`Rating: ${review.rating}`} </strong>
-                            {review.review}
+                            {review.message}
                         </li>
                     ))
                 ) : (
-                    <li>No customer reviews available.</li> // Message when there are no reviews
+                    <li>No customer reviews available.</li> 
                 )}
             </ul>
 
-            <form onSubmit={handleReviewSubmit}>
+            {userType === 'Customer' && <form onSubmit={handleReviewSubmit}>
                 <div>
                     <strong>Rate this book:</strong>
                     <StarRating rating={rating} setRating={setRating} /> {/* Render StarRating component */}
@@ -126,8 +171,21 @@ const BookDetails: React.FC = () => {
                     rows={4}
                     style={{ width: '100%' }}
                 />
+                {validationMessage && <div style={{ color: 'red' }}>{validationMessage}</div>}
                 <button type="submit">Submit Review</button>
-            </form>
+            </form>}
+            
+            {book.isAvailable && userType === 'Customer' && (
+                <button onClick={handleCheckout} style={{ marginTop: '20px' }}>
+                    Checkout Book
+                </button>
+            )}
+            
+            {!book.isAvailable && userType === 'Librarian' && (
+                <button onClick={handleReturn} style={{ marginTop: '20px' }}>
+                    Return Book
+                </button>
+            )}
 
             <button onClick={() => navigate(-1)}>Back to Book List</button>
         </div>

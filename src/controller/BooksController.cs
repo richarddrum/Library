@@ -22,7 +22,7 @@ public class BooksController : ControllerBase
         try
         {
             var books = _context.Books
-                .Select(b => new Book
+                .Select(b => new
                 {
                     Id = b.Id,
                     Title = b.Title,
@@ -36,7 +36,8 @@ public class BooksController : ControllerBase
                     PageCount = b.PageCount,
                     IsAvailable = b.IsAvailable,
                     CheckedOutDate = b.CheckedOutDate,
-                    ReturnDate = b.ReturnDate
+                    ReturnDate = b.ReturnDate,
+                    AverageRating = b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0
                 })
                 .ToList();
 
@@ -87,7 +88,42 @@ public class BooksController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception (you can use any logging framework)
+            Console.Error.WriteLine($"Error retrieving featured books: {ex.Message}");
+
+            // Return a generic error response
+            return StatusCode(500, "Internal server error. Please try again later.");
+        }
+    }
+
+    [HttpGet("checkedout")]
+    [Authorize(Roles = "Librarian")] // Only allow librarians to view checked out books
+    public IActionResult GetCheckedOutBooks()
+    {
+        try
+        {
+            var checkedOutBooks = _context.Books
+                .Where(b => b.IsAvailable == false)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Title,
+                    b.Author,
+                    b.Description,
+                    b.CoverImage,
+                    b.CheckedOutDate,
+                    b.ReturnDate
+                })
+                .ToList();
+
+            if (checkedOutBooks == null || !checkedOutBooks.Any())
+            {
+                return NotFound("No checked out books found.");
+            }
+
+            return Ok(checkedOutBooks);
+        }
+        catch (Exception ex)
+        {
             Console.Error.WriteLine($"Error retrieving featured books: {ex.Message}");
 
             // Return a generic error response
@@ -116,7 +152,8 @@ public class BooksController : ControllerBase
                 Reviews = b.Reviews.Select(r => new {
                     r.Message,
                     r.Rating
-                }).ToList()
+                }).ToList(),
+                AverageRating = b.Reviews.Any() ? b.Reviews.Average(r => r.Rating) : 0
             })
             .FirstOrDefault();
 
@@ -196,7 +233,7 @@ public class BooksController : ControllerBase
     public IActionResult CheckoutBook(int id)
     {
         var book = _context.Books.Find(id);
-        if (book == null || book.IsAvailable == false) // Assuming an IsAvailable property
+        if (book == null || book.IsAvailable == false)
             return BadRequest("Book not available for checkout.");
 
         book.IsAvailable = false; // Mark book as checked out

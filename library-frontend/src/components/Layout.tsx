@@ -1,18 +1,20 @@
 // src/Layout.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isTokenValid } from '../utilities/AuthenticationUtils';
-import { jwtDecode } from 'jwt-decode';
+import { useUserContext } from './UserContext';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
+    const { userType, tokenIsValid, setUserType, setTokenIsValid } = useUserContext();
 
     const handleHome = () => {
         navigate('/'); 
     };
     const handleLogout = () => {
         localStorage.removeItem('token'); 
-        navigate('/login'); 
+        setUserType(null); // Clear user type
+        setTokenIsValid(false); // Set token validity to false
+        navigate('/login');
     };
     const handleManageBooks = () => {
         navigate('/manage-books'); 
@@ -20,8 +22,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const handleBrowseBooks = () => {
         navigate('/browse-books'); 
     };
+    const handleCheckedOutBooks = () => {
+        navigate('/checked-out'); 
+    };
     const handleLogin = () => {
-        navigate('/login'); 
+        navigate('/login');
     };
     const handleRegister = () => {
         navigate('/signup'); 
@@ -29,17 +34,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const handleFeatured = () => {
         navigate('/featured-books'); 
     };
-    const token = localStorage.getItem('token');
-    const [userType, setUserType] = useState<string | null>(null);
-    const tokenIsValid = isTokenValid(token);
-    // If token is not valid, redirect to login
-    useEffect(() => {
-        if (tokenIsValid && token)
-        {
-            const decoded: any = jwtDecode(token);
-            setUserType(decoded.userType); 
-        }
-    }, [token, navigate, tokenIsValid]);
+    const handleSearch = () => {
+        navigate('/book-search'); 
+    };
     
     return (
         <div>
@@ -61,7 +58,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         {tokenIsValid && userType === 'Librarian' && (<button onClick={handleManageBooks}> Manage Books</button>)}
                     </li>
                     <li>
+                        {tokenIsValid && userType === 'Librarian' && (<button onClick={handleCheckedOutBooks}> Checked Out Books</button>)}
+                    </li>
+                    <li>
                         {tokenIsValid && userType === 'Customer' && (<button onClick={handleBrowseBooks}> Browse Books</button>)}
+                    </li>
+                    <li>
+                        {tokenIsValid && (<button onClick={handleSearch}>Book Search</button>)}
                     </li>
                     <li>
                         {tokenIsValid && (<button onClick={handleLogout}>Logout</button>)}
