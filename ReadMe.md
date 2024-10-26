@@ -53,7 +53,7 @@ Download and install the necessary technology: .NET 8, Node Package Manager, SQL
    dotnet run
 3. Install the necessary dependencies
    ```bash
-   cd library-management-system
+   cd library-frontend
    npm install
 4. Run the frontend - should run on port 3000
    ```bash
