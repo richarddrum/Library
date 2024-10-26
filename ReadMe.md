@@ -19,7 +19,7 @@ This Library Management System is a web application designed to manage book regi
   - Check out books.
 - **Librarians**: 
   - Can view all checked-out books and their due dates.
-  - Managing book information and availability.
+  - Manage book information and availability.
   - Add, edit and delete books on the registry
   - Return books
   
