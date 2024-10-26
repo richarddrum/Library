@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axiosConfig from '../utilities/axiosConfig'; // Adjust the import based on your axios setup
-import { Book } from '../types/Book'; // Import your Book interface
+import axiosConfig from '../utilities/axiosConfig'; 
+import { Book } from '../types/Book'; 
 import { getAuthHeader } from '../utilities/ApiUtils';
 import { useNavigate } from 'react-router-dom';
 

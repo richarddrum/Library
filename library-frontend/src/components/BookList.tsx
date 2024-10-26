@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Book } from '../types/Book';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Table.css'; // Import your CSS file for styling
+import '../styles/Table.css'; 
 
 // Define the props for the BookList component
 interface BookListProps {

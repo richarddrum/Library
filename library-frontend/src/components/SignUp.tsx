@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axiosConfig from '../utilities/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-import '../styles/styles.css'; // Import your centralized CSS
+import '../styles/styles.css';
 import { login } from '../utilities/authService';
 import { useUserContext } from './UserContext';
 

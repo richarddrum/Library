@@ -50,10 +50,7 @@ public class BooksController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception (you can use any logging framework)
             Console.Error.WriteLine($"Error retrieving books: {ex.Message}");
-
-            // Return a generic error response
             return StatusCode(500, "Internal server error. Please try again later.");
         }
     }
@@ -185,10 +182,7 @@ public class BooksController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception (you can use any logging framework)
             Console.Error.WriteLine($"Error retrieving featured books: {ex.Message}");
-
-            // Return a generic error response
             return StatusCode(500, "Internal server error. Please try again later.");
         }
         return CreatedAtAction(nameof(GetBookDetails), new { id = book.Id }, book);
@@ -204,7 +198,7 @@ public class BooksController : ControllerBase
 
         existingBook.Title = book.Title;
         existingBook.Author = book.Author;
-        existingBook.Description = book.Description; // Ensure you're updating all necessary fields
+        existingBook.Description = book.Description; 
         existingBook.Publisher = book.Publisher;
         existingBook.PublicationDate = book.PublicationDate;
         existingBook.Category = book.Category;

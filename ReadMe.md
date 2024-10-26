@@ -47,14 +47,16 @@ Download and install the necessary technology: .NET 8, Node Package Manager, SQL
 1. Clone the repository:
    ```bash
    git clone https://github.com/richarddrum/Library.git
-2. Build and start the API - should run locally on port 5237
+2. Ensure SQL Server is running on port 1433 on your machine
+    - Set the connection string password in ./appsettings.json
+3. Build and start the API - should run locally on port 5237
    ```bash
    dotnet build
    dotnet run
-3. Install the necessary dependencies
+4. Install the necessary dependencies
    ```bash
    cd library-frontend
    npm install
-4. Run the frontend - should run on port 3000
+5. Run the frontend - should run on port 3000
    ```bash
    npm run start

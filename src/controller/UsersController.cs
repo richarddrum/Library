@@ -81,8 +81,6 @@ namespace BookStoreAPI.Controllers
                     }
                     return BadRequest(new { errors }); // Return the list of error messages
                 }
-                // Assign role to the user
-                // Assuming the role is determined by the UserType or is hardcoded
                 var role = registerDto.UserType == "Librarian" ? "Librarian" : "Customer";
                 await _userManager.AddToRoleAsync(user, role);
 
@@ -90,7 +88,6 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (use your logging framework of choice)
                 Console.WriteLine($"Error during registration: {ex.Message}");
                 return StatusCode(500, "Internal server error. Please try again later.");
             }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity; 
 using BookStoreAPI.Models;
-using Microsoft.AspNetCore.Identity; // Ensure this is the correct namespace for your models
 
 namespace BookStoreAPI.Data
 {
@@ -11,11 +11,9 @@ namespace BookStoreAPI.Data
         {
         }
 
-        // DbSet for Books
         public DbSet<Book> Books { get; set; }
 
-        // DbSet for Reviews
-        public DbSet<Review> Reviews { get; set; } // Add this line
+        public DbSet<Review> Reviews { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
